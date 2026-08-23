@@ -1,0 +1,215 @@
+:root {
+  --maroon: #6f1d1b;
+  --deep: #3d1513;
+  --gold: #c8923d;
+  --cream: #f8f0df;
+  --paper: #fffaf0;
+  --ink: #30231d;
+  --muted: #75675d;
+  --line: #dbc8a6;
+  --green: #304b35;
+  font-family: Georgia, "Times New Roman", serif;
+  color: var(--ink);
+  background: var(--cream);
+  line-height: 1.7;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--cream); }
+button, a { font: inherit; }
+button { cursor: pointer; }
+
+.site-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(200,146,61,.08), transparent 28%),
+    radial-gradient(circle at 80% 60%, rgba(111,29,27,.05), transparent 30%),
+    var(--cream);
+}
+
+.container { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(61, 21, 19, .97);
+  border-bottom: 3px solid var(--gold);
+  color: #fff9ec;
+}
+
+.topbar-inner { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+
+.brand-mark { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.brand-symbol {
+  display: grid; place-items: center; width: 46px; height: 46px;
+  border: 1px solid var(--gold); border-radius: 50%;
+  color: #f1c66f; font-size: 26px;
+}
+.brand-mark strong { display: block; font-size: 23px; letter-spacing: .5px; }
+.brand-mark small { display: block; color: #d7c4a3; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; }
+
+nav { display: flex; gap: 5px; }
+nav button, .footer-links button {
+  border: 0; background: transparent; color: inherit; padding: 10px 13px;
+  text-transform: uppercase; letter-spacing: 1.3px; font-size: 12px;
+}
+nav button:hover, .footer-links button:hover { color: #f1c66f; }
+
+.menu-button { display: none; background: none; border: 0; color: white; font-size: 28px; }
+
+.hero {
+  min-height: 720px;
+  display: flex; align-items: center;
+  position: relative; overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(44,17,13,.9), rgba(44,17,13,.55), rgba(44,17,13,.25)),
+    url("https://www.metroindia.net/uploads/articles/article_65990788.webp") center/cover;
+  color: #fff8e8;
+}
+.hero::after {
+  content: "ॐ";
+  position: absolute; right: 7%; top: 15%; color: rgba(255,255,255,.12);
+  font-size: 280px; pointer-events: none;
+}
+.hero-content { position: relative; z-index: 2; max-width: 720px; padding: 100px 0; }
+.eyebrow {
+  margin: 0 0 10px; color: #e9c36d; font-size: 11px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+}
+.eyebrow.dark { color: var(--maroon); }
+.hero h1 { margin: 0; font-size: clamp(68px, 11vw, 140px); line-height: .85; font-weight: 500; }
+.hero h2 { margin: 28px 0 12px; font-size: clamp(24px, 4vw, 42px); font-weight: 400; }
+.hero-copy { max-width: 600px; font-size: 18px; color: #f2e8d4; }
+.hero-actions { display: flex; gap: 12px; margin-top: 28px; }
+
+.primary-btn, .ghost-btn {
+  border: 1px solid var(--gold); padding: 13px 22px; text-transform: uppercase;
+  letter-spacing: 1px; font-size: 12px;
+}
+.primary-btn { background: var(--gold); color: var(--deep); }
+.ghost-btn { background: transparent; color: white; }
+
+.section { padding: 88px 0; }
+.intro { background: var(--paper); border-bottom: 1px solid var(--line); }
+.two-col { display: grid; grid-template-columns: .85fr 1.15fr; gap: 80px; align-items: start; }
+.section-title { margin: 0; font-size: clamp(34px, 5vw, 55px); line-height: 1.1; font-weight: 500; }
+.lead { margin: 0; color: var(--muted); font-size: 19px; }
+
+.feature-strip { padding: 30px 0; background: var(--maroon); color: #fff5df; }
+.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+.feature-card { padding: 24px 32px; border-right: 1px solid rgba(255,255,255,.16); }
+.feature-card:last-child { border-right: 0; }
+.feature-card > span { color: #e9c36d; font-size: 28px; }
+.feature-card h3 { margin: 8px 0; font-size: 22px; font-weight: 500; }
+.feature-card p { margin: 0; color: #e4d6bf; font-size: 14px; }
+
+.section-heading { display: flex; justify-content: space-between; align-items: end; margin-bottom: 35px; }
+.text-btn { border: 0; background: none; color: var(--maroon); text-transform: uppercase; letter-spacing: 1px; font-size: 12px; }
+
+.gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.gallery-grid.compact { grid-template-columns: repeat(3, 1fr); }
+.photo-card { margin: 0; background: var(--paper); border: 1px solid var(--line); box-shadow: 0 12px 30px rgba(61,21,19,.08); overflow: hidden; }
+.photo-card img { display: block; width: 100%; height: 310px; object-fit: cover; filter: saturate(.9) sepia(.08); transition: transform .5s ease; }
+.photo-card.large img { height: 390px; }
+.photo-card:hover img { transform: scale(1.025); }
+.photo-card figcaption { padding: 18px 20px 20px; display: grid; gap: 4px; }
+.photo-card figcaption span { color: var(--maroon); font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; }
+.photo-card figcaption strong { font-size: 20px; font-weight: 500; }
+.photo-card figcaption small { color: var(--muted); font-size: 11px; }
+
+.page-banner {
+  padding: 115px 0 90px; color: #fff7e8;
+  background:
+    linear-gradient(rgba(61,21,19,.9), rgba(61,21,19,.82)),
+    url("https://upload.wikimedia.org/wikipedia/commons/8/8d/16th_century_Kodandarama_temple%2C_Vontimitta%2C_Andhra_Pradesh_India_-_34.jpg") center/cover;
+}
+.page-banner h1 { margin: 0; max-width: 850px; font-size: clamp(45px, 7vw, 80px); line-height: 1; font-weight: 500; }
+.page-banner p:not(.eyebrow) { max-width: 700px; color: #e6d8c0; font-size: 18px; }
+
+.history-layout { display: grid; grid-template-columns: 1.3fr .7fr; gap: 80px; }
+.timeline-item { position: relative; display: grid; grid-template-columns: 64px 1fr; gap: 24px; padding: 0 0 50px; }
+.timeline-item:not(:last-child)::before { content: ""; position: absolute; left: 31px; top: 52px; bottom: 0; width: 1px; background: var(--line); }
+.timeline-dot { width: 64px; height: 64px; border-radius: 50%; border: 1px solid var(--gold); display: grid; place-items: center; color: var(--maroon); background: var(--paper); font-size: 13px; }
+.timeline-item h2 { margin: 0 0 8px; font-size: 30px; font-weight: 500; }
+.timeline-item p:not(.eyebrow) { margin: 0; color: var(--muted); }
+
+.heritage-card {
+  align-self: start; padding: 9px; background: var(--maroon);
+  box-shadow: 0 20px 45px rgba(61,21,19,.2);
+}
+.heritage-card-inner { border: 1px solid #c8923d; padding: 34px; color: #fff5df; }
+.card-symbol { color: #e9c36d; font-size: 30px; }
+.heritage-card h3 { font-size: 30px; font-weight: 500; margin: 8px 0; }
+.heritage-card p { color: #e4d6bf; }
+.fact { border-top: 1px solid rgba(255,255,255,.16); padding: 14px 0; display: flex; align-items: baseline; gap: 12px; }
+.fact strong { color: #f1c66f; font-size: 30px; }
+.fact span { color: #eadcc4; font-size: 13px; }
+
+.festival-banner { background: linear-gradient(rgba(48,75,53,.92), rgba(48,75,53,.84)), url("https://assets.thehansindia.com/h-upload/2023/04/04/1345176-tpt.jpg") center/cover; }
+.festival-intro { max-width: 900px; margin: 0 auto 55px; text-align: center; }
+.drop-cap { font-size: 25px; color: var(--muted); }
+.drop-cap:first-letter { float: left; font-size: 76px; line-height: .8; color: var(--maroon); padding: 6px 9px 0 0; }
+.festival-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.festival-card { background: var(--paper); border: 1px solid var(--line); padding: 35px; text-align: center; }
+.festival-badge { display: inline-block; padding: 5px 10px; border: 1px solid var(--gold); color: var(--maroon); text-transform: uppercase; font-size: 10px; letter-spacing: 1px; }
+.festival-card h2 { font-size: 27px; font-weight: 500; line-height: 1.2; }
+.ornament { color: var(--gold); font-size: 25px; }
+.festival-card p { color: var(--muted); }
+
+.gallery-banner { background: linear-gradient(rgba(61,21,19,.9), rgba(61,21,19,.82)), url("https://akm-img-in.tosshub.com/indiatoday/images/story/202204/7d77ddc2-a260-4bc0-8d39-3da074.jpg?VersionId=2MiJ9Gtj0VmKeObw5obbjPmO0O79kdDj") center/cover; }
+.filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
+.filter-row button { background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 9px 15px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+.filter-row button.active, .filter-row button:hover { background: var(--maroon); border-color: var(--maroon); color: white; }
+.gallery-note { color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); margin-top: 35px; padding-top: 18px; }
+
+.about-banner { background: linear-gradient(rgba(111,29,27,.9), rgba(111,29,27,.86)), url("https://www.metroindia.net/uploads/articles/article_65990788.webp") center/cover; }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.paper-card { background: var(--paper); border: 1px solid var(--line); padding: 42px; }
+.paper-card h2 { margin: 0 0 20px; font-size: 35px; line-height: 1.15; font-weight: 500; }
+.paper-card p { color: var(--muted); }
+.source-list { list-style: none; padding: 0; margin: 0; }
+.source-list li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+.source-list a { color: var(--maroon); text-decoration: none; }
+.small-note { font-size: 12px; }
+
+footer { background: var(--deep); color: #eee0c8; border-top: 3px solid var(--gold); }
+.footer-grid { padding: 45px 0; display: flex; justify-content: space-between; gap: 30px; align-items: center; }
+.footer-brand { font-size: 32px; color: #fff6e4; }
+.footer-grid p { margin: 0; color: #bcae99; font-size: 12px; letter-spacing: 1px; }
+.footer-links { display: flex; gap: 4px; }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding: 15px 20px; text-align: center; color: #a99b87; font-size: 11px; letter-spacing: .5px; }
+
+.floating-top {
+  position: fixed; right: 20px; bottom: 20px; width: 42px; height: 42px;
+  border: 1px solid var(--gold); background: var(--maroon); color: #fff;
+  border-radius: 50%; z-index: 10;
+}
+
+@media (max-width: 850px) {
+  .menu-button { display: block; }
+  nav { display: none; position: absolute; left: 0; right: 0; top: 78px; background: var(--deep); padding: 12px 20px 18px; flex-direction: column; border-bottom: 2px solid var(--gold); }
+  nav.open { display: flex; }
+  nav button { text-align: left; padding: 12px; }
+  .hero { min-height: 620px; }
+  .two-col, .history-layout, .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  .feature-grid, .festival-grid { grid-template-columns: 1fr; }
+  .feature-card { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.16); }
+  .feature-card:last-child { border-bottom: 0; }
+  .gallery-grid, .gallery-grid.compact { grid-template-columns: 1fr; }
+  .footer-grid { flex-direction: column; align-items: flex-start; }
+  .footer-links { flex-wrap: wrap; }
+}
+
+@media (max-width: 520px) {
+  .container { width: min(100% - 26px, 1160px); }
+  .hero h1 { font-size: 68px; }
+  .hero-content { padding: 80px 0; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .section { padding: 60px 0; }
+  .timeline-item { grid-template-columns: 48px 1fr; gap: 16px; }
+  .timeline-dot { width: 48px; height: 48px; }
+  .timeline-item:not(:last-child)::before { left: 23px; }
+  .paper-card { padding: 28px; }
+}
