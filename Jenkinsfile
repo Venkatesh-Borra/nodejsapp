@@ -16,6 +16,7 @@ pipeline {
                 sh '''
                     docker build -t vmtblog:${BUILD_NUMBER} .
                     docker tag vmtblog:${BUILD_NUMBER} borravenkatesh/vmtblog:${BUILD_NUMBER}
+                    echo "DOcker image built and tagged successfully."
                 '''
             }
         }
