@@ -105,116 +105,43 @@ pipeline {
         // =========================================================
         stage('Update Kubernetes Manifest') {
             steps {
-
-                dir('manifests') {
-
-                    sh '''
-                        echo "========================================="
-                        echo "Updating Kubernetes Manifest"
-                        echo "========================================="
-
-                        Update_Image="borravenkatesh/vmtblog:${BUILD_NUMBER}"
-                        replicas=2
-
-                        export Update_Image
-                        export replicas
-
-                        echo "New Docker Image : ${Update_Image}"
-                        echo "Replicas         : ${replicas}"
-
-                        echo "========================================="
-                        echo "Updating Image"
-                        echo "========================================="
-
-                        yq -i \
-                            '.spec.template.spec.containers[0].image = strenv(Update_Image)' \
-                            deployment.yaml
-
-                        echo "Image updated successfully"
-
-                        echo "========================================="
-                        echo "Updating Replicas"
-                        echo "========================================="
-
-                        yq -i \
-                            '.spec.replicas = env(replicas)' \
-                            deployment.yaml
-
-                        echo "Replicas updated successfully"
-
-                        echo "========================================="
-                        echo "Updated deployment.yaml"
-                        echo "========================================="
-
-                        cat deployment.yaml
-
-                        echo "========================================="
-                        echo "Git Configuration"
-                        echo "========================================="
-
-                        git config user.name "Jenkins"
-                        git config user.email "jenkins@localhost"
-
-                        echo "========================================="
-                        echo "Git Status"
-                        echo "========================================="
-
-                        git status
-
-                        echo "========================================="
-                        echo "Adding Changes"
-                        echo "========================================="
-
-                        git add deployment.yaml
-
-                        echo "========================================="
-                        echo "Committing Changes"
-                        echo "========================================="
-
-                        git commit \
-                            -m "Update image to ${Update_Image}"
-
-                        echo "Manifest committed successfully"
-                    '''
-                }
-            }
-        }
-
-
-        // =========================================================
-        // 6. Push Kubernetes Manifest
-        // =========================================================
- stage('Push Kubernetes Manifest') {
-    steps {
-
-        dir('manifests') {
-
-            echo "========================================="
-            echo "Pushing Kubernetes Manifest"
-            echo "========================================="
-
-            withCredentials([
-                usernamePassword(
-                    credentialsId: 'github-creds',
-                    usernameVariable: 'GITHUB_USERNAME',
-                    passwordVariable: 'GITHUB_PASSWORD'
-                )
-            ]) {
-
                 sh '''
-                    git config user.name "Jenkins"
-                    git config user.email "jenkins@localhost"
-
-                    git config credential.helper \
-                        "!f() { echo username=$GITHUB_USERNAME; echo password=$GITHUB_PASSWORD; }; f"
-
-                    git push origin HEAD:main
-
-                    git config --unset credential.helper
-
-                    echo "Kubernetes manifest pushed successfully"
+                    echo "Cleaning old mainifests if any"
+                    rm -rf vmt_blog_k8s_manifests
+                    rm -rf manifests
+                    mkdir manifests
+                    cd manifests
+                    Update_Image="borravenkatesh/vmtblog:${BUILD_NUMBER}"
+                    replicas=2
+                    echo "Pulling kubernetes manifests from github"
+                    git clone https://github.com/Venkatesh-Borra/vmt_blog_k8s_manifests.git .
+                    echo "Modifying the image name in deployment.yaml"
+                    yq -i '.spec.template.spec.containers[0].image = $Update_Image' ./vmt_blog_k8s_manifests/deployment.yaml
+                    echo "Image name updated successfully in deployment.yaml"
+                    echo "---------------------------------------------------------"
+                    echo "Updated Replicas in deployment.yaml"
+                    yq -i '.spec.replicas = $replicas' ./vmt_blog_k8s_manifests/deployment.yaml
+                    echo "comming the changes to github"
+                    git add .
+                    git commit -m "Updated image name in deployment.yaml"
                 '''
             }
+        }
+        stage('Pushing kubernetes manifests to github') {
+            steps {
+                withCredentials([
+                    usernamePassword([
+                        credentialsId: 'github-creds',
+                        usernameVariable: 'GITHUB_USERNAME',
+                        passwordVariable: 'GITHUB_PASSWORD'])])
+                        {
+                            sh '''
+                                cd manifests
+                                git config user.name "Jenkins"
+                                git config user.email "jenkins@localhost"
+                                git push origin main
+                            '''
+                        }
         }
     }
 }
