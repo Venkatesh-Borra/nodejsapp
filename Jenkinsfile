@@ -40,5 +40,38 @@ pipeline {
                 }
             }
         }
+        stage('pulling kubernetes manifests') {
+            steps {
+                sh '''
+                    Update_Image="borravenkatesh/vmtblog:${BUILD_NUMBER}"
+                    replicas=2
+                    echo "Pulling kubernetes manifests from github"
+                    git clone https://github.com/Venkatesh-Borra/vmt_blog_k8s_manifests.git
+                    echo "Modifying the image name in deployment.yaml"
+                    yq -i '.spec.template.spec.containers[0].image = $Update_Image' deployment.yaml
+                    echo "Image name updated successfully in deployment.yaml"
+                    echo "---------------------------------------------------------"
+                    echo "Updated Replicas in deployment.yaml"
+                    yq -i '.spec.replicas = $replicas' deployment.yaml
+                    echo "comming the changes to github"
+                    git add .
+                    git commit -m "Updated image name in deployment.yaml"
+                '''
+            }
+        }
+        stage('Pushing kubernetes manifests to github') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'github-creds',
+                        usernameVariable: 'GITHUB_USERNAME',
+                        passwordVariable: 'GITHUB_PASSWORD'])
+                        {
+                            sh '''
+                                git push origin main
+
+                            '''
+                        }
+        }
     }
 }
