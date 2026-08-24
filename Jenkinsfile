@@ -51,7 +51,7 @@ pipeline {
                     Update_Image="borravenkatesh/vmtblog:${BUILD_NUMBER}"
                     replicas=2
                     echo "Pulling kubernetes manifests from github"
-                    git clone https://github.com/Venkatesh-Borra/vmt_blog_k8s_manifests.git
+                    git clone https://github.com/Venkatesh-Borra/vmt_blog_k8s_manifests.git .
                     echo "Modifying the image name in deployment.yaml"
                     yq -i '.spec.template.spec.containers[0].image = $Update_Image' ./vmt_blog_k8s_manifests/deployment.yaml
                     echo "Image name updated successfully in deployment.yaml"
