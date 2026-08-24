@@ -71,11 +71,8 @@ pipeline {
 
                         echo "Modifying the image name in deployment.yaml"
 
-                        export Update_Image
-
-                        yq -i \
-                            '.spec.template.spec.containers[0].image = strenv(Update_Image)' \
-                            deployment.yaml
+                    
+                        yq -i '.spec.template.spec.containers[0].image = $Update_Image' deployment.yaml
 
                         echo "Image name updated successfully in deployment.yaml"
 
@@ -83,9 +80,7 @@ pipeline {
 
                         echo "Updated Replicas in deployment.yaml"
 
-                        yq -i \
-                            '.spec.replicas = env(replicas)' \
-                            deployment.yaml
+                        yq -i '.spec.replicas = $replicas' deployment.yaml
 
                         echo "Updated deployment.yaml:"
                         cat deployment.yaml
