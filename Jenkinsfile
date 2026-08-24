@@ -43,6 +43,8 @@ pipeline {
         stage('pulling kubernetes manifests') {
             steps {
                 sh '''
+                    echo "Cleaning old mainifests if any"
+                    rm -rf vmt_blog_k8s_manifests
                     Update_Image="borravenkatesh/vmtblog:${BUILD_NUMBER}"
                     replicas=2
                     echo "Pulling kubernetes manifests from github"
