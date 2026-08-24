@@ -62,10 +62,10 @@ pipeline {
         stage('Pushing kubernetes manifests to github') {
             steps {
                 withCredentials([
-                    usernamePassword(
+                    usernamePassword([
                         credentialsId: 'github-creds',
                         usernameVariable: 'GITHUB_USERNAME',
-                        passwordVariable: 'GITHUB_PASSWORD'])
+                        passwordVariable: 'GITHUB_PASSWORD'])])
                         {
                             sh '''
                                 git push origin main
