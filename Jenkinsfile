@@ -98,10 +98,12 @@ pipeline {
                         sh '''
                     git config user.name "Jenkins"
                     git config user.email "jenkins@localhost"
+                    git config credential.helper \
+                    "!f() { echo username=$GITHUB_USERNAME; echo password=$GITHUB_PASSWORD; }; f"
 
                     git push origin main
 
-                    #git config --unset credential.helper
+                    git config --unset credential.helper
 
                     echo "Pushed updated deployment.yaml to GitHub."
                         '''
