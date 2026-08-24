@@ -59,11 +59,17 @@ pipeline {
                     sh '''
                         IMAGE="borravenkatesh/vmtblog:${BUILD_NUMBER}"
                         export IMAGE
+                        replicas=3
+                        export replicas
 
                         echo "Updating image to: $IMAGE"
 
                         yq -i \
                             '.spec.template.spec.containers[0].image = strenv(IMAGE)' \
+                            deployment.yaml
+                        echo "Updating replicas to: $replicas"
+                        yq -i \
+                            '.spec.replicas = strenv(replicas)' \
                             deployment.yaml
 
                         echo "Updated deployment.yaml:"
