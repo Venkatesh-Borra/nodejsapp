@@ -73,6 +73,7 @@ pipeline {
                         passwordVariable: 'GITHUB_PASSWORD'])])
                         {
                             sh '''
+                                cd manifests/vmt_blog_k8s_manifests
                                 git config user.name "Jenkins"
                                 git config user.email "jenkins@localhost"
                                 git push origin main
