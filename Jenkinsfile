@@ -3,6 +3,9 @@ pipeline {
 
     stages {
 
+        // =========================================================
+        // 1. Pull Application Code
+        // =========================================================
         stage('Code Pull') {
             steps {
                 git branch: 'main',
@@ -11,17 +14,35 @@ pipeline {
             }
         }
 
+
+        // =========================================================
+        // 2. Docker Build
+        // =========================================================
         stage('Docker Build') {
             steps {
                 sh '''
-                    docker build -t vmtblog:${BUILD_NUMBER} .
-                    docker tag vmtblog:${BUILD_NUMBER} borravenkatesh/vmtblog:${BUILD_NUMBER}
+                    echo "========================================="
+                    echo "Building Docker Image"
+                    echo "========================================="
 
-                    echo "Docker image built and tagged successfully."
+                    docker build \
+                        -t vmtblog:${BUILD_NUMBER} .
+
+                    docker tag \
+                        vmtblog:${BUILD_NUMBER} \
+                        borravenkatesh/vmtblog:${BUILD_NUMBER}
+
+                    echo "Docker image built successfully"
+
+                    docker images | grep vmtblog
                 '''
             }
         }
 
+
+        // =========================================================
+        // 3. Docker Push
+        // =========================================================
         stage('Docker Push') {
             steps {
                 withCredentials([
@@ -31,12 +52,23 @@ pipeline {
                         passwordVariable: 'DOCKER_PASSWORD'
                     )
                 ]) {
+
                     sh '''
-                        echo "$DOCKER_PASSWORD" | docker login \
+                        echo "========================================="
+                        echo "Logging into Docker Hub"
+                        echo "========================================="
+
+                        echo "$DOCKER_PASSWORD" | \
+                            docker login \
                             -u "$DOCKER_USERNAME" \
                             --password-stdin
 
-                        docker push borravenkatesh/vmtblog:${BUILD_NUMBER}
+                        echo "Pushing Docker image"
+
+                        docker push \
+                            borravenkatesh/vmtblog:${BUILD_NUMBER}
+
+                        echo "Docker image pushed successfully"
 
                         docker logout
                     '''
@@ -44,8 +76,13 @@ pipeline {
             }
         }
 
-        stage('pulling kubernetes manifests') {
+
+        // =========================================================
+        // 4. Pull and Update Kubernetes Manifest
+        // =========================================================
+        stage('Update Kubernetes Manifest') {
             steps {
+
                 withCredentials([
                     usernamePassword(
                         credentialsId: 'github-creds',
@@ -53,53 +90,96 @@ pipeline {
                         passwordVariable: 'GITHUB_PASSWORD'
                     )
                 ]) {
+
                     sh '''
-                        echo "Cleaning old manifests if any"
+                        echo "========================================="
+                        echo "Cleaning Old Kubernetes Manifests"
+                        echo "========================================="
 
                         rm -rf manifests
                         mkdir manifests
 
                         cd manifests
 
+
+                        echo "========================================="
+                        echo "Variables"
+                        echo "========================================="
+
                         Update_Image="borravenkatesh/vmtblog:${BUILD_NUMBER}"
                         replicas=2
 
-                        echo "Pulling kubernetes manifests from github"
+                        echo "Image    : ${Update_Image}"
+                        echo "Replicas : ${replicas}"
+
+
+                        echo "========================================="
+                        echo "Cloning Kubernetes Manifest Repository"
+                        echo "========================================="
 
                         git clone \
                             https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/Venkatesh-Borra/vmt_blog_k8s_manifests.git .
 
-                        echo "Modifying the image name in deployment.yaml"
 
-                    
-                        yq -i '.spec.template.spec.containers[0].image = $Update_Image' deployment.yaml
+                        echo "========================================="
+                        echo "Updating Docker Image"
+                        echo "========================================="
 
-                        echo "Image name updated successfully in deployment.yaml"
+                        export Update_Image
 
-                        echo "---------------------------------------------------------"
+                        yq -i \
+                            '.spec.template.spec.containers[0].image = strenv(Update_Image)' \
+                            deployment.yaml
 
-                        echo "Updated Replicas in deployment.yaml"
 
-                        yq -i '.spec.replicas = $replicas' deployment.yaml
+                        echo "========================================="
+                        echo "Updating Replicas"
+                        echo "========================================="
 
-                        echo "Updated deployment.yaml:"
+                        export replicas
+
+                        yq -i \
+                            '.spec.replicas = env(replicas)' \
+                            deployment.yaml
+
+
+                        echo "========================================="
+                        echo "Updated deployment.yaml"
+                        echo "========================================="
+
                         cat deployment.yaml
 
-                        echo "Committing changes to github"
+
+                        echo "========================================="
+                        echo "Git Configuration"
+                        echo "========================================="
 
                         git config user.name "Jenkins"
                         git config user.email "jenkins@localhost"
 
+
+                        echo "========================================="
+                        echo "Committing Kubernetes Manifest"
+                        echo "========================================="
+
                         git add deployment.yaml
 
-                        git commit -m "Updated image to ${Update_Image}"
+                        git commit \
+                            -m "Update image to ${Update_Image}"
+
+                        echo "Kubernetes manifest committed successfully"
                     '''
                 }
             }
         }
 
-        stage('Pushing kubernetes manifests to github') {
+
+        // =========================================================
+        // 5. Push Kubernetes Manifest
+        // =========================================================
+        stage('Push Kubernetes Manifest') {
             steps {
+
                 withCredentials([
                     usernamePassword(
                         credentialsId: 'github-creds',
@@ -107,17 +187,62 @@ pipeline {
                         passwordVariable: 'GITHUB_PASSWORD'
                     )
                 ]) {
-                    sh '''
-                        cd manifests
 
-                        echo "Pushing Kubernetes manifests to GitHub"
+                    sh '''
+                        echo "========================================="
+                        echo "Pushing Kubernetes Manifest to GitHub"
+                        echo "========================================="
+
+                        cd manifests
 
                         git push \
                             https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/Venkatesh-Borra/vmt_blog_k8s_manifests.git \
                             HEAD:main
+
+                        echo "Kubernetes manifest pushed successfully"
                     '''
                 }
             }
+        }
+    }
+
+
+    // =============================================================
+    // Post Actions
+    // =============================================================
+    post {
+
+        success {
+            echo '''
+            =========================================
+            PIPELINE SUCCESS
+            =========================================
+
+            Docker Image:
+            borravenkatesh/vmtblog:${BUILD_NUMBER}
+
+            Kubernetes Manifest:
+            Updated and pushed successfully
+
+            =========================================
+            '''
+        }
+
+        failure {
+            echo '''
+            =========================================
+            PIPELINE FAILED
+            =========================================
+
+            Check the stage that failed above.
+
+            =========================================
+            '''
+        }
+
+        always {
+            echo "Build Number: ${BUILD_NUMBER}"
+            echo "Pipeline execution completed."
         }
     }
 }
