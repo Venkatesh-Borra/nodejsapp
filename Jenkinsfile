@@ -45,6 +45,9 @@ pipeline {
                 sh '''
                     echo "Cleaning old mainifests if any"
                     rm -rf vmt_blog_k8s_manifests
+                    rm -rf manifests
+                    mkdir manifests
+                    cd manifests
                     Update_Image="borravenkatesh/vmtblog:${BUILD_NUMBER}"
                     replicas=2
                     echo "Pulling kubernetes manifests from github"
