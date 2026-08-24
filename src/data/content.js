@@ -2,7 +2,7 @@ export const gallery = [
   {
     title: "Temple at night during festival arrangements",
     year: "2022",
-    category: "Festival",
+    category: "Festival(Tirunala)",
     image: "https://akm-img-in.tosshub.com/indiatoday/images/story/202204/7d77ddc2-a260-4bc0-8d39-3da074.jpg?VersionId=2MiJ9Gtj0VmKeObw5obbjPmO0O79kdDj",
     source: "India Today"
   },

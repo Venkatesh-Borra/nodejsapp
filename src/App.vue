@@ -125,7 +125,7 @@
         </div>
       </section>
 
-      <section v-if="page === 'festival'" class="page-banner festival-banner">
+      <section v-if="page === 'festival(Tirunala)'" class="page-banner festival-banner">
         <div class="container">
           <p class="eyebrow">TRADITION IN MOTION</p>
           <h1>Festival of Sri Rama</h1>
