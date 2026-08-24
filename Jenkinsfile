@@ -70,8 +70,9 @@ pipeline {
                         passwordVariable: 'GITHUB_PASSWORD'])])
                         {
                             sh '''
+                                git config user.name "Jenkins"
+                                git config user.email "jenkins@localhost"
                                 git push origin main
-
                             '''
                         }
         }
