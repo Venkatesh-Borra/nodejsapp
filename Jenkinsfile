@@ -67,11 +67,6 @@ pipeline {
                         yq -i \
                             '.spec.template.spec.containers[0].image = strenv(IMAGE)' \
                             deployment.yaml
-                        echo "Updating replicas to: $replicas"
-                        yq -i \
-                            '.spec.replicas = strenv(replicas)' \
-                            deployment.yaml
-
                         echo "Updated deployment.yaml:"
                         cat deployment.yaml
 
