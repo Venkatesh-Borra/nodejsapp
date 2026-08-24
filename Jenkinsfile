@@ -53,11 +53,11 @@ pipeline {
                     echo "Pulling kubernetes manifests from github"
                     git clone https://github.com/Venkatesh-Borra/vmt_blog_k8s_manifests.git .
                     echo "Modifying the image name in deployment.yaml"
-                    yq -i '.spec.template.spec.containers[0].image = $Update_Image' ./vmt_blog_k8s_manifests/deployment.yaml
+                    yq -i '.spec.template.spec.containers[0].image = $Update_Image' ./manifests/vmt_blog_k8s_manifests/deployment.yaml
                     echo "Image name updated successfully in deployment.yaml"
                     echo "---------------------------------------------------------"
                     echo "Updated Replicas in deployment.yaml"
-                    yq -i '.spec.replicas = $replicas' ./vmt_blog_k8s_manifests/deployment.yaml
+                    yq -i '.spec.replicas = $replicas' ./manifests/vmt_blog_k8s_manifests/deployment.yaml
                     echo "comming the changes to github"
                     git add .
                     git commit -m "Updated image name in deployment.yaml"
