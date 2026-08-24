@@ -184,35 +184,40 @@ pipeline {
         // =========================================================
         // 6. Push Kubernetes Manifest
         // =========================================================
-        stage('Push Kubernetes Manifest') {
-            steps {
+ stage('Push Kubernetes Manifest') {
+    steps {
 
-                dir('manifests') {
+        dir('manifests') {
 
-                    echo "========================================="
-                    echo "Pushing Kubernetes Manifest"
-                    echo "========================================="
+            echo "========================================="
+            echo "Pushing Kubernetes Manifest"
+            echo "========================================="
 
-                    withCredentials([
-                        usernamePassword(
-                            credentialsId: 'github-creds',
-                            usernameVariable: 'GITHUB_USERNAME',
-                            passwordVariable: 'GITHUB_PASSWORD'
-                        )
-                    ]) {
+            withCredentials([
+                usernamePassword(
+                    credentialsId: 'github-creds',
+                    usernameVariable: 'GITHUB_USERNAME',
+                    passwordVariable: 'GITHUB_PASSWORD'
+                )
+            ]) {
 
-                        sh '''
-                            git push \
-                                https://${GITHUB_USERNAME}:${GITHUB_PASSWORD}@github.com/Venkatesh-Borra/vmt_blog_k8s_manifests.git \
-                                HEAD:main
+                sh '''
+                    git config user.name "Jenkins"
+                    git config user.email "jenkins@localhost"
 
-                            echo "Kubernetes manifest pushed successfully"
-                        '''
-                    }
-                }
+                    git config credential.helper \
+                        "!f() { echo username=$GITHUB_USERNAME; echo password=$GITHUB_PASSWORD; }; f"
+
+                    git push origin HEAD:main
+
+                    git config --unset credential.helper
+
+                    echo "Kubernetes manifest pushed successfully"
+                '''
             }
         }
     }
+}
 
 
     // =============================================================
